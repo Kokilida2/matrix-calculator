@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "handlemymat.h"
 #include "mat.h"
 
@@ -9,9 +10,18 @@
 int mattoidx(char *mat_name) {
     char* prefix = "MAT_";
     int prefix_len = strlen(prefix);
-    if (strlen(mat_name) != prefix_len + 1) return -1;
-    if (strncmp(mat_name, prefix, prefix_len)) return -1;
-    if (mat_name[prefix_len] < 'A' || mat_name[prefix_len] > 'F') return -1;
+    if (strlen(mat_name) != prefix_len + 1) {
+        printf("* ERROR: invalid mat name [%s]\n", mat_name);
+        return -1;
+    }
+    if (strncmp(mat_name, prefix, prefix_len)) {
+        printf("* ERROR: invalid mat name [%s]\n", mat_name);
+        return -1;
+    }
+    if (mat_name[prefix_len] < 'A' || mat_name[prefix_len] > 'F') {
+        printf("* ERROR: invalid mat name [%s]\n", mat_name);
+        return -1;
+    }
     return mat_name[prefix_len] - 'A';
 }
 
@@ -32,12 +42,13 @@ int valid_string_to_double(char *s) {
 char* strip(char* s) {
 	char *retval;
 	char *p;
-
-	if (s == NULL)
+    char* cpy;
+    if (s == NULL)
 		return NULL;
-
+    cpy = (char*)malloc(sizeof(char) * (strlen(s) + 1));
+    strcpy(cpy, s);
 	/* init */
-	p = s;
+	p = cpy;
 
 	/* skip initial whitespace */
 	while (*p && (*p == ' ' || *p == '\t'))
@@ -48,10 +59,9 @@ char* strip(char* s) {
 	/* reach the end */
 	while (*p++);
 
-	/* go back as long as we're seeing a whitespace */
-	while (p > retval && (*p == ' ' || *p == '\t'))
+	while (p > retval && (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\0')) {
 		p--;
-    printf("p = [%c]\n", *p);
+    }
 	*++p = '\0';
 	return retval;
 }
@@ -73,29 +83,30 @@ int commas_valid(char* p) {
 
 	/* string is 2 or more chars: check no 2 consecutive commas */
 	while ((curr_char = *p++) != 0) {
-		if (curr_char == ',' && last_char == ',')
-			return 0;
+		if (curr_char == ',' && last_char == ',') {
+			printf("ERROR: two consecutive commas\n");
+            return 0;
+        }
 		last_char = curr_char;
 	}
 
 	/* check that the last char is not a comma */
-	if (last_char == ',')
-		return 0;
+	if (last_char == ',') {
+		printf("ERROR: extra comma at end of line\n");
+        return 0;
+    }
 
 	return 1;
 }
 
 char* read_next_arg() {
-    char *s = strtok(NULL, ",");
-    printf("In read_next_arg, s = (%s)\n", s);
-	char *s2 = strip(s);
-    printf("strip(s) = [%s]\n", s2);
-    return s2;
+    return strip(strtok(NULL, ","));
 }
 
 int no_more_args() {
-    if (read_next_arg()) {
-		printf("ERROR: extra arg");
+    char *extraarg;
+    if ((extraarg = read_next_arg()) != NULL) {
+		printf("ERROR: extra arg: [%s]", extraarg);
 		return 0;
 	}
 	return 1;
@@ -114,38 +125,28 @@ int handlereadmat(mat **mats) {
     int i = 0;
     double nums[MAT_LENGTH*MAT_LENGTH] = {0};
     char *token;
-    char *toreadto;
     int matidx;
 
-    toreadto = strtok(NULL, " \t");
-    if ((matidx = mattoidx(toreadto)) == -1) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto);
-        return 0;
-    }
-    printf("strtok(NULL,) = %s", strtok(NULL, " \t"));
-    while ((token = strtok(NULL, " \t")) != NULL && i < MAT_LENGTH * MAT_LENGTH) {
+    matidx = read_mat_idx();
+    while ((token = read_next_arg()) != NULL) {
         if (!valid_string_to_double(token)) {
             printf("ERROR, expected a number but got %s\n", token);
             return 0;
         }
-        sscanf(token, "%lf", &(nums[i++]));
-        strtok(NULL, " \t");
+        if (i < MAT_LENGTH * MAT_LENGTH) {
+            sscanf(token, "%lf", &(nums[i++]));
+        }
     }
-    /* printf("** HANDLE_READ_MAT: mats[matidx]=%p\n", (void*)mats[matidx]); */
     readmat(mats[matidx], nums);
-    /* printmat(mats[matidx]); */
     return 1;
 }
 
 int handleprintmat(mat **mats) {
-    char *toreadto;
     int matidx;
-
-    toreadto = strtok(NULL, " ");
-    if ((matidx = mattoidx(toreadto) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto);
+    if ((matidx = read_mat_idx()) == -1) {
         return 0;
     }
+    printf("MAT_%c : \n\t", ('A' + matidx));
     printmat(mats[matidx]);
     return 1;
 }

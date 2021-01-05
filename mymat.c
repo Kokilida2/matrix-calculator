@@ -14,7 +14,7 @@ int main() {
     mat * mats[6];
     char *cmd;
     char input[1000];
-    
+    char *strippedinput;
     mats[0] = &MAT_A;
     mats[1] = &MAT_B;
     mats[2] = &MAT_C;
@@ -25,8 +25,9 @@ int main() {
     while (1) {
         printf(">> ");
         fgets(input, 1000, stdin);
-        if (commas_valid(strip(input))) {
-            cmd = strtok(input, " \t\n");
+        strippedinput = strip(input);
+        if (commas_valid(strippedinput)) {
+            cmd = strtok(strippedinput, " \t\n");
             if(cmd !=  NULL) {
                 /* read_mat command */
                 if (!strcmp(cmd, READ_MAT_CMD)) {

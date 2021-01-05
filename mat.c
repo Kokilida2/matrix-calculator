@@ -17,8 +17,9 @@ void printmat(mat *m) {
         for (j = 0; j < MAT_LENGTH; j++) {
             printf("%7.2f ", (*m)[i][j]);
         }
-        printf("\n");
+        printf("\n\t");
     }
+    printf("\n");
 }
 
 void addmat(mat *mata, mat *matb, mat *matc) {
