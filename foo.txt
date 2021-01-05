@@ -1,0 +1,148 @@
+
+
+ 
+|  |r |e |a |d |_ |m |a |t |\t|\t|M |A |T |_ |A |  |  |  |2 |, |  |  |3 |, |4 |  |, |  |5 |\0|
+
+
+|  |r |e |a |d |_ |m |a |t |\0|\t|M |A |T |_ |A |\0|  |  |2 |\0|  |  |3 |\0|4 |\0|, |  |5 |\0|
+    ^                             ^                       ^           ^     ^           ^
+
+-------------------------------------------------------
+
+int expecting_arg;
+int parse_error;
+
+char* get_next_arg() {
+    while (1) {
+        char* t = strtok(NULL, " \t");
+
+        if (t == NULL) {
+            if (expecting_arg) {
+                printf("* ERROR: reached end of input, but expecting arg\n");
+                parse_error = 1;
+                return NULL;
+            } else {
+                return NULL;
+            }
+
+        } else if (!strcmp(t, ",")) {
+            if (expecting_arg) {
+                printf("* ERROR: found comma, but expecting arg\n");
+                parse_error = 1;
+                return NULL;
+            } else {
+                expecting_arg = 1;
+            }
+
+        } else {
+            if (!expecting_arg) {
+                printf("* ERROR: expecting comma, but found arg\n");
+                parse_error = 1;
+                return NULL;
+            }
+
+            expecting_arg = 0;
+            return t;
+        }
+    }
+}
+
+
+int get_mat_idx_arg() {
+    char* mat_name = get_next_arg();
+    if (mat1_name == NULL) {
+        return -1;
+    }
+    int mat_idx = mat_name_to_idx(mat1_name);
+    if (mat_idx == -1) {
+        printf("* ERROR: invalid mat name [%s]\n", mat1_name);
+    }
+    return mat_idx;
+}
+
+int get_double_arg() {
+    ...;
+}
+
+int validate_end_of_input() {
+    char* t = get_next_arg();
+    if (parse_error) {
+        return 0;
+    }
+    if (t != NULL) {
+        printf("* ERROR: extraneous arg [%s]\n", t);
+        return 0;
+    }
+    return 1;
+}
+
+-----------------------------
+while (1) {
+    cmd_name = strtok(s, " \t");
+    expecting_arg = 1;
+    parse_error = 0;
+
+    if (!strcmp(cmd_name, "READ_MAT")) {
+        handle_read_mat();
+    } else if (!strcmp(cmd_name, "ADD_MAT")) {
+        handle_add_mat();
+    } ... {
+        ...
+    } else if (!strcmp(cmd_name, "STOP")) {
+        if (handle_stop()) {
+            break;
+        }
+    }
+}
+printf("Goodbye!\n");
+
+----------------------------------
+
+void handle_stop() {
+    if (!validate_end_of_input()) return 0;
+    return 1;
+}
+
+
+void handle_add_mat() {
+    if ((mat1_idx = get_mat_idx_arg()) == -1) return;
+    if ((mat2_idx = get_mat_idx_arg()) == -1) return;
+    if ((mat3_idx = get_mat_idx_arg()) == -1) return;
+    if (!validate_end_of_input()) return;
+    ...
+}
+
+void handle_print_mat() {
+    if ((mat_idx = get_mat_idx_arg()) == -1) return;
+    if (!validate_end_of_input()) return;
+    ...
+}
+
+void handle_read_mat() {
+    if ((mat_idx = get_mat_idx_arg()) == -1) return;
+
+    int k = 0;
+    while (1) {
+        t = get_next_arg();
+        if (parse_error) return;
+        if (t == NULL) {
+            break;
+        }
+        if (!validate_float(t)) {
+            print("* ERROR: [%s] is not a valid number\n", t);
+            return;
+        }
+        double x = str_to_double(t);
+        mat[k / MAT_LENGTH][k % MAT_LENGTH] = x;
+        if (++k == MAT_LENGTH * MAT_LENGTH) return;
+    }
+    // fill the rest with zeros
+    if (i == 0 && j == 0) {
+        print("* ERROR: must input at least one number\n");
+        return;
+    }
+    while (k < MAT_LENGTH * MAT_LENGTH) {
+        mat[k / MAT_LENGTH][k % MAT_LENGTH] = 0;
+        k++;
+    }
+}
