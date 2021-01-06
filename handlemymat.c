@@ -33,6 +33,7 @@ int valid_string_to_double(char *s) {
 
     itemsread = sscanf(s, "%lf %n", &d, &charsread);
     if (itemsread != 1 || s[charsread] != '\0') {
+        printf("ERROR, [%s] is not a number", s);
         return 0;
     }
     return 1;
@@ -142,10 +143,8 @@ int handlereadmat(mat **mats) {
 }
 
 int handleprintmat(mat **mats) {
-    int matidx;
-    if ((matidx = read_mat_idx()) == -1) {
-        return 0;
-    }
+    int matidx = read_mat_idx();
+    if (matidx == -1) return 0;
     printf("MAT_%c : \n\t", ('A' + matidx));
     printmat(mats[matidx]);
     return 1;
@@ -163,113 +162,47 @@ int handleaddmat(mat **mats) {
 
 int handlesubmat(mat **mats) {
     /* getting the 3 mats */
-    char *toreadto1;
-    int matidx1;
-    char *toreadto2;
-    int matidx2;
-    char *toreadto3;
-    int matidx3;
-
-    toreadto1 = strtok(NULL, ",");
-    if ((matidx1 = mattoidx(toreadto1) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto1);
-        return 0;
-    }
-    
-    toreadto2 = strtok(NULL, ",");
-    if ((matidx2 = mattoidx(toreadto2) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto2);
-        return 0;
-    }
-
-    
-    toreadto3 = strtok(NULL, " ");
-    if ((matidx3 = mattoidx(toreadto3) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto3);
-        return 0;
-    }
-
+    int matidx1, matidx2, matidx3;
+    if ((matidx1 = read_mat_idx()) == -1) return 0;
+	if ((matidx2 = read_mat_idx()) == -1) return 0;
+	if ((matidx3 = read_mat_idx()) == -1) return 0;
+    if (!no_more_args()) return 0;
     submat(mats[matidx1], mats[matidx2], mats[matidx3]);
     return 1;
 }
 
 int handlemulmat(mat **mats) {
     /* getting the 3 mats */
-    char *toreadto1;
-    int matidx1;
-    char *toreadto2;
-    int matidx2;
-    char *toreadto3;
-    int matidx3;
-
-    toreadto1 = strtok(NULL, ",");
-    if ((matidx1 = mattoidx(toreadto1) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto1);
-        return 0;
-    }
-    
-    toreadto2 = strtok(NULL, ",");
-    if ((matidx2 = mattoidx(toreadto2) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto2);
-        return 0;
-    }
-
-    toreadto3 = strtok(NULL, " ");
-    if ((matidx3 = mattoidx(toreadto3) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto3);
-        return 0;
-    }
-
+    int matidx1, matidx2, matidx3;
+    if ((matidx1 = read_mat_idx()) == -1) return 0;
+	if ((matidx2 = read_mat_idx()) == -1) return 0;
+	if ((matidx3 = read_mat_idx()) == -1) return 0;
+    if(!no_more_args()) return 0;
     mulmat(mats[matidx1], mats[matidx2], mats[matidx3]); 
-    return 1;  
+    return 1;
 }
 
 int handlemulscalar(mat **mats) {
-    char *toreadto1;
-    int matidx1;
-    char *scalarptr;
+    int matidx1, matidx2;
     double scalar;
-    char *toreadto2;
-    int matidx2;
+    char *scalarstr;
+    if ((matidx1 = read_mat_idx()) == -1) return 0;
 
-    toreadto1 = strtok(NULL, ",");
-    if ((matidx1 = mattoidx(toreadto1) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto1);
-        return 0;
-    }
-    scalarptr = strtok(NULL, ",");
-    if (!valid_string_to_double(scalarptr)) {
-        printf("ERROR: %s is not a valid double scalar", scalarptr);
-        return 0;
-    }
+    scalarstr = read_next_arg();
+	if (!valid_string_to_double(scalarstr)) return 0;
 
-    sscanf(scalarptr, "%lf", &scalar);
-    toreadto2 = strtok(NULL, ",");
-    if ((matidx2 = mattoidx(toreadto2) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto2);
-        return 0;
-    }
+	if ((matidx2 = read_mat_idx()) == -1) return 0;
 
+    sscanf(scalarstr, "%lf", &scalar);
     mulscalar(mats[matidx1], scalar, mats[matidx2]);
     return 1;
 }
 
 int handletransmat(mat **mats) {
-    char *toreadto1;
-    int matidx1;
-    char *toreadto2;
-    int matidx2;
-    toreadto1 = strtok(NULL, ",");
-    if ((matidx1 = mattoidx(toreadto1) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto1);
-        return 0;
-    }
-
-    toreadto2 = strtok(NULL, ",");
-    if ((matidx2 = mattoidx(toreadto2) == -1)) {
-        printf("ERROR: %s is not a valid matrix name\n", toreadto2);
-        return 0;
-    }
+    int matidx1, matidx2;
+    if ((matidx1 = read_mat_idx()) == -1) return 0;
+	if ((matidx2 = read_mat_idx()) == -1) return 0;
+    if(!no_more_args()) return 0;
 
     transmat(mats[matidx1], mats[matidx2]);
     return 1;
