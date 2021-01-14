@@ -1,3 +1,5 @@
+/* Written by Lior Shaked 326584125 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +15,8 @@ int main() {
 
     mat * mats[6];
     char *cmd;
-    char input[1000];
+    char input[INPUTLENGTH];
+    char strippedinputarr[INPUTLENGTH];
     char *strippedinput;
     mats[0] = &MAT_A;
     mats[1] = &MAT_B;
@@ -21,11 +24,16 @@ int main() {
     mats[3] = &MAT_D;
     mats[4] = &MAT_E;
     mats[5] = &MAT_F;
-
+    strippedinput = strippedinputarr;
     while (1) {
         printf(">> ");
-        fgets(input, 1000, stdin);
-        strippedinput = strip(input);
+        fgets(input, INPUTLENGTH, stdin);
+        if (!strcmp(input, "")) {
+            printf("ERROR, reached end of file without \"stop\" command\n");
+            return 1;
+        }
+        strippedinput = strip(input, strippedinputarr);
+        printf("Your command: [%s]\n", strippedinput);
         if (commas_valid(strippedinput)) {
             cmd = strtok(strippedinput, " \t\n");
             if(cmd !=  NULL) {
@@ -45,7 +53,7 @@ int main() {
                 } else if (!strcmp(cmd, TRANS_MAT_CMD)) { 
                     handletransmat(mats);
                 } else if (!strcmp(cmd, STOP_CMD)) {
-                    break;
+                    if (handlestop()) break;
                 } else {
                     printf("Unrecognized command\n");
                 }
@@ -53,5 +61,6 @@ int main() {
         }
     }
     printf("Goodbye!\n");
+    printf("-Matrix Calculator by Lior Shaked-\n");
     return 0;
 }
