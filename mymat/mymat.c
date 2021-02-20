@@ -25,6 +25,7 @@ int main() {
     mats[4] = &MAT_E;
     mats[5] = &MAT_F;
     strippedinput = strippedinputarr;
+    printf("Hello! Welcome to Lior's Matrix Calculator version 1.3!\nType \"help\" for a command list!\n");
     while (1) {
         printf(">> ");
         fgets(input, INPUTLENGTH, stdin);
@@ -53,7 +54,10 @@ int main() {
                 } else if (!strcmp(cmd, TRANS_MAT_CMD)) { 
                     handletransmat(mats);
                 } else if (!strcmp(cmd, STOP_CMD)) {
-                    if (handlestop()) break;
+                    if (!handlestop()) break;
+                    break;
+                }  else if (!strcmp(cmd, HELP_CMD)) {
+                    handlehelp();
                 } else {
                     printf("Unrecognized command\n");
                 }

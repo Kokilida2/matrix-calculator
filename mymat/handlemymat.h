@@ -7,12 +7,13 @@
 /* defining command names */
 #define READ_MAT_CMD "read_mat"
 #define PRINT_MAT_CMD "print_mat"
-#define ADD_MAT_CMD "add_mat"
-#define SUB_MAT_CMD "sub_mat"
-#define MUL_MAT_CMD "mul_mat"
-#define MUL_SCALAR_CMD "mul_scalar"
+#define ADD_MAT_CMD "add_mat" 
+#define SUB_MAT_CMD "sub_mat" 
+#define MUL_MAT_CMD "mul_mat" 
+#define MUL_SCALAR_CMD "mul_scalar" 
 #define TRANS_MAT_CMD "trans_mat"
-#define STOP_CMD "stop"
+#define HELP_CMD "help" 
+#define STOP_CMD "stop" 
 
 /* matrix names form */
 #define PREFIX "MAT_"
@@ -72,5 +73,8 @@ int commas_valid(char *);
 
 /* strips the string: gets rid of white space in the start and end of the first string and stores the result in the second string*/
 char* strip(char *, char *);
+
+/* prints the commands */
+int handlehelp();
 
 #endif /* handlemymat.h */

@@ -262,3 +262,30 @@ int handlestop() {
     if (!no_more_args()) return 0;
     return 1;
 }
+
+int handlehelp() {
+    if (!no_more_args()) return 0;
+    printf("Welcome to my calculator!\n This calculator contains 6 matrix variables named \"MAT_A\" through \"MAT_F\".\n");
+    printf("The matrices are of size 4x4. NOTE: This calculator does not feature matrices of size different than 4x4.\n If you are looking for a matrix calculator that features dynamic sized matrices I would suggest checking out matrixcalc.org\n");
+    printf("The list of commands is thus:\n");
+    printf("\n");
+    printf("\"stop\" - This command stops the program from running.\n");
+    printf("\n");
+    printf("\"help\" - This commands explains how to use the calculator.\n");
+    printf("\n");
+    printf("\"print_mat [matrix name]\" - This command prints the matrix's values unto the screen.\n");
+    printf("\n");
+    printf("\"add_mat [matrix_name1], [matrix_name2], [matrix_name3]\" - This command adds the first two matrices and stores the result in the third matrix.\n");
+    printf("\n");
+    printf("\"sub_mat [matrix_name1], [matrix_name2], [matrix_name3]\" - This command subtracts the second matrix from the first and stores the result in the third matrix.\n");
+    printf("\n");
+    printf("\"mul_scalar [matrix_name1], [number], [matrix_name2]\" - This command multiplies the first matrix by the scalar and stores the result in the second matrix.\n");
+    printf("\n");
+    printf("\"mul_mat [matrix_name1], [matrix_name2], [matrix_name3]\" - This command multiplies the first two matrices and stores the result in the third matrix.\n");
+    printf("\n");
+    printf("\"trans_mat [matrix_name1], [matrix_name2]\" - This command transposes the first matrix and stores the result in the second matrix.\n");
+    printf("\n");
+    printf("\"read_mat [matrix_name], [number], [number], [number].... \" - This command reads the numbers into the matrix. The first value will be read into the top left cell, the second into the next cell in the top row... ect...\nafter 4 numbers, the values will be stored in the next row. If less than 16 numbers are provided, the rest will be filled with 0. If more than 16 numbers are provided, only the first 16 will be stored.");
+    printf("\n");
+    return 1;
+}
